@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostsModule } from './posts/posts.module';
+import { UsersModule } from './users/users.module';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { PostsModule } from './posts/posts.module';
       }),
     }),
     PostsModule,
+    UsersModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
