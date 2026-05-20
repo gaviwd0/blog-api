@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+} from 'typeorm';
 import { Post } from '../../posts/entities/post.entity';
 
 export enum Role {
@@ -10,10 +18,10 @@ export enum Role {
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
-  @Column()
+  @Column({ unique: true })
   username!: string;
 
   @Column({ unique: true })
@@ -22,18 +30,27 @@ export class User {
   @Column()
   password!: string;
 
-  @Column()
-  imageProfile!: string;
+  @Column({ nullable: true })
+  imageProfile?: string;
 
-  @Column()
-  bio!: string;
+  @Column({ nullable: true })
+  bio?: string;
 
   @Column({
     type: 'enum',
     enum: Role,
-    default: Role.NORMAL,
+    default: Role.OVNI,
   })
   role!: Role;
+
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @UpdateDateColumn()
+  updatedAt!: Date;
+
+  @DeleteDateColumn()
+  deletedAt!: Date;
 
   @OneToMany(() => Post, (post) => post.userOwner)
   posts!: Post[];
