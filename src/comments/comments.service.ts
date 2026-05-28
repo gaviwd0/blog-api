@@ -4,7 +4,7 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 
 @Injectable()
 export class CommentsService {
-  create(createCommentDto: CreateCommentDto) {
+  create(_createCommentDto: CreateCommentDto) {
     return 'This action adds a new comment';
   }
 
@@ -16,7 +16,7 @@ export class CommentsService {
     return `This action returns a #${id} comment`;
   }
 
-  update(id: number, updateCommentDto: UpdateCommentDto) {
+  update(id: number, _updateCommentDto: UpdateCommentDto) {
     return `This action updates a #${id} comment`;
   }
 

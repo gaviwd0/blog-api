@@ -4,7 +4,7 @@ import { UpdateTagDto } from './dto/update-tag.dto';
 
 @Injectable()
 export class TagsService {
-  create(createTagDto: CreateTagDto) {
+  create(_createTagDto: CreateTagDto) {
     return 'This action adds a new tag';
   }
 
@@ -16,7 +16,7 @@ export class TagsService {
     return `This action returns a #${id} tag`;
   }
 
-  update(id: number, updateTagDto: UpdateTagDto) {
+  update(id: number, _updateTagDto: UpdateTagDto) {
     return `This action updates a #${id} tag`;
   }
 
