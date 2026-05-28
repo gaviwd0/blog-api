@@ -6,6 +6,8 @@ import { User, Role } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { findoneOutUser } from './dto/findone-user.dto';
 import { findAllUserDto } from './dto/findall-user.dto';
+import * as bcrypt from 'bcrypt';
+import { ownerOrAdmin } from 'src/common/utils/authorization.utils';
 
 @Injectable()
 export class UsersService {
@@ -14,6 +16,7 @@ export class UsersService {
     private readonly usersRepository: Repository<User>,
   ) {}
 
+  //no se utiliza en el controlador de user, se usa en el modulo Auth
   async create(createUserDto: CreateUserDto): Promise<object | HttpException> {
     const existUser: [User[], number] | undefined =
       await this.usersRepository.findAndCount({
@@ -30,8 +33,14 @@ export class UsersService {
         HttpStatus.CONFLICT,
       );
 
-    //creamos el usuario
-    const newUser = this.usersRepository.create(createUserDto);
+    //hasheamos la contraseña
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+
+    //creamos el usuario con la contraseña hasheada
+    const newUser = this.usersRepository.create({
+      ...createUserDto,
+      password: hashedPassword,
+    });
 
     //guardamos el usuario
     await this.usersRepository.save(newUser);
@@ -58,10 +67,6 @@ export class UsersService {
       'user.email',
       'user.bio',
       'user.imageProfile',
-      'user.role',
-      'user.createdAt',
-      'user.updatedAt',
-      'user.deletedAt',
     ]).where('user.deletedAt IS NULL');
 
     if (username) {
@@ -98,8 +103,11 @@ export class UsersService {
     };
   }
 
-  //usar solamente para datos privados
-  async findOne(id: string): Promise<findoneOutUser | HttpException> {
+  async findOne(
+    id: string,
+    userReq: { id: string; username: string; role: string },
+  ): Promise<findoneOutUser | HttpException> {
+    ownerOrAdmin(id, userReq);
     const user = await this.usersRepository.findOneBy({
       id: id,
       deletedAt: undefined,
@@ -119,8 +127,12 @@ export class UsersService {
     };
   }
 
-  //usar query builder
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    userReq: { id: string; username: string; role: string },
+  ) {
+    ownerOrAdmin(id, userReq);
     const user = await this.usersRepository.findOne({
       where: {
         id: id,
@@ -180,7 +192,12 @@ export class UsersService {
     };
   }
 
-  async remove(id: string): Promise<object | HttpException> {
+  async remove(
+    id: string,
+    userReq: { id: string; username: string; role: string },
+  ): Promise<object | HttpException> {
+    ownerOrAdmin(id, userReq);
+
     const user = await this.usersRepository.findOneBy({
       id: id,
       deletedAt: undefined,
