@@ -39,23 +39,23 @@ export class TagsService {
       qb.andWhere('tag.name ILIKE :name', {
         name: `%${dto.name}%`,
       });
-
-      qb.orderBy('tag.name', 'DESC')
-        .skip((page - 1) * limit)
-        .take(limit);
-
-      const [data, total] = await qb.getManyAndCount();
-
-      return {
-        data,
-        meta: {
-          total,
-          page,
-          limit,
-          lastPage: Math.ceil(total / limit),
-        },
-      };
     }
+
+    qb.orderBy('tag.name', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit);
+
+    const [data, total] = await qb.getManyAndCount();
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        lastPage: Math.ceil(total / limit),
+      },
+    };
   }
 
   async findOne(
