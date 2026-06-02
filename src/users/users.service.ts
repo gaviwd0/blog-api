@@ -226,8 +226,6 @@ export class UsersService {
 
     await this.usersRepository.update(id, { role: role });
 
-    await this.usersRepository.save(existUserId);
-
-    return existUserId.role;
+    return role;
   }
 }
