@@ -1,5 +1,6 @@
 import {
   ForbiddenException,
+  HttpException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -22,7 +23,7 @@ export class PostsService {
   async create(
     createPostDto: CreatePostDto,
     userReq: { id: string; username: string; role: string },
-  ) {
+  ): Promise<Post> {
     const post = this.postsRepository.create({
       ...createPostDto,
       userOwner: { id: userReq.id },
@@ -31,7 +32,11 @@ export class PostsService {
     return this.postsRepository.save(post);
   }
 
-  async findAll(query: findAllPostDto, userId?: string, role?: string) {
+  async findAll(
+    query: findAllPostDto,
+    userId?: string,
+    role?: string,
+  ): Promise<Post[]> {
     const { page = 1, limit = 10, title } = query;
 
     const qb = this.postsRepository
@@ -70,7 +75,7 @@ export class PostsService {
   async findOne(
     id: number,
     userReq?: { id: string; username: string; role: string },
-  ) {
+  ): Promise<Post | HttpException> {
     const post = await this.postsRepository.findOne({
       where: { id },
       relations: ['userOwner'],
@@ -95,7 +100,7 @@ export class PostsService {
     id: number,
     updatePostDto: UpdatePostDto,
     userReq: { id: string; username: string; role: string },
-  ) {
+  ): Promise<Post | HttpException> {
     const post = await this.postsRepository.findOne({
       where: { id },
       relations: ['userOwner'],
@@ -113,7 +118,7 @@ export class PostsService {
   async remove(
     id: number,
     userReq: { id: string; username: string; role: string },
-  ) {
+  ): Promise<object | HttpException> {
     const post = await this.postsRepository.findOne({
       where: { id },
       relations: ['userOwner'],
