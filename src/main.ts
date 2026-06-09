@@ -4,9 +4,6 @@ import { ValidationPipe } from '@nestjs/common';
 import { TransformInterceptor } from './common/interceptors/transformRequest.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exeption.filter';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-const swagerUrl: string =
-  (process.env.API_URL ?? 'http://localhost:3000/') +
-  (process.env.API_PREFIX ?? 'blogapi/v1');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -28,13 +25,11 @@ async function bootstrap() {
 
   //config swagger
   const config = new DocumentBuilder()
-    .addServer(swagerUrl)
     .setTitle('Blog Api - NestJs')
     .setDescription(
       'RESTful API para un sistema de blog con autenticación JWT, roles de usuario, y CRUD completo de posts, comentarios y tags',
     )
     .setVersion('1.0')
-    .addTag('Blogs')
     .addTag(
       'Auth',
       'Endpoints de autenticación: registro, login, refresh y logout',
@@ -63,7 +58,7 @@ async function bootstrap() {
     )
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/docs', app, documentFactory);
+  SwaggerModule.setup(process.env.API_PREFIX + '/docs', app, documentFactory);
 
   // mantener esto a lo ultimo siempre
   await app.listen(process.env.PORT ?? 3000);
