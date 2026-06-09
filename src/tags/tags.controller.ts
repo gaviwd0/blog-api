@@ -19,8 +19,10 @@ import { Role } from 'src/users/entities/user.entity';
 import { JwtOptionalGuard } from 'src/auth/guards/jwt-optional.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { findAllTagsDto } from './dto/findall-tag.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('tags')
+@ApiTags('Tags')
 export class TagsController {
   constructor(private readonly tagsService: TagsService) {}
 
